@@ -139,12 +139,15 @@
   <div class="col-md-4">
     <div class="affix">
       <!--
+      TODO Das Könnte interessant für das Speichern der Schätz-Session werden
       <div class="btn-group pull-right">
         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
           <span class="glyphicon glyphicon-cog"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
-          <li><a href="#">Action</a></li>
+
+          TODO die methode getAllStories() erstellen in main.js
+          <li><a ng-click="getAllStories()">Save session</a></li>
           <li><a href="#">Another action</a></li>
           <li><a href="#">Something else here</a></li>
           <li class="divider"></li>
@@ -168,7 +171,13 @@
       </div>
       <div class="vspace">
         <h5>Share this game</h5>
-        <p>Copy the address in your browser and share with team members.</p>
+        <p>Copy the address in your browser and share with team members</p>
+        <p>or scan this QR-Code:</p>
+        <div id="qrcode" ng-click="zoom()">
+          <p><img id="qrcodeimg" src="https://api.qrserver.com/v1/create-qr-code/?data={{getQRCode()}}&amp;size=300x300"
+                  alt="" title="" height="250px" width="250px"/>
+          </p>
+        </div>
       </div>
     </div>
   </div>
