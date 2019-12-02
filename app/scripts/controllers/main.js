@@ -93,7 +93,10 @@ angular.module('firePokerApp')
       if ($routeParams.gid && $location.path() === '/games/' + $routeParams.gid) {
         angularFire(ref.child('/games/' + $routeParams.gid), $scope, 'game').then(function() {
           // Is current user the game owner?
-          if ($scope.game.owner && $scope.game.owner.id && $scope.game.owner.id === $scope.fp.user.id) {
+          //TODO hier habe ich den check auf name admin hinzugefügt
+          if ($scope.fp.user.fullname === "Admin") {
+            $scope.isOwner = true;
+          } else if ($scope.game.owner && $scope.game.owner.id && $scope.game.owner.id === $scope.fp.user.id) {
             $scope.isOwner = true;
           } else {
             $scope.isOwner = false;
@@ -111,6 +114,40 @@ angular.module('firePokerApp')
           }
         });
       }
+    };
+
+    //Get gameid
+    //TODO hier muss man die host url ändern, wenn man die Seite hosten will
+    $scope.getQRCode = function () {
+      var host = "http://localhost:9000/%23/games/";
+      var id = $routeParams.gid;
+      var link = host + id;
+      var image = "https://api.qrserver.com/v1/create-qr-code/?data=" + link + "&amp;size=500x500\" ";
+      var alt = "alt\"\" ";
+      //document.getElementById("qrcode").innerHTML = "<img id='qrcodeimg' src=" + image + alt + "/>";
+      return host + id;
+    };
+
+    $scope.zoom = function (){
+        var q = document.getElementById("qrcodeimg");
+        var width = window.innerWidth;
+        if (width > 1170) {
+          width = 1170;
+        }
+        var col = width / 3;
+        var size = col + "px";
+        if (q.style.height !== size) {
+          q.style.width = size;
+          q.style.height = size;
+        } else {
+          q.style.width = "250px";
+          q.style.height = "250px";
+        }
+    };
+
+    $scope.getStoryNotes = function (x) {
+
+      return $scope.game.stories[x].notes;
     };
 
     // Create game
@@ -260,35 +297,36 @@ angular.module('firePokerApp')
     };
 
     // Play again
-    $scope.playAgain = function() {
+    $scope.playAgain = function () {
       $scope.game.estimate.results = [];
       $scope.game.estimate.status = 'active';
-      angular.forEach($scope.game.participants, function(participant) {
+      angular.forEach($scope.game.participants, function (participant) {
         participant.hasVoted = false;
       });
     };
 
     // Cancel round
-    $scope.cancelRound = function() {
+    $scope.cancelRound = function () {
       if ($scope.game.estimate) {
         var idx = $scope.game.estimate.id;
         $scope.game.stories[idx].startedAt = false;
         $scope.game.stories[idx].endedAt = false;
         $scope.game.stories[idx].status = 'queue';
         $scope.game.estimate = false;
-        angular.forEach($scope.game.participants, function(participant) {
+        angular.forEach($scope.game.participants, function (participant) {
           participant.hasVoted = false;
         });
       }
     };
 
     // Reveal cards
-    $scope.revealCards = function() {
+    $scope.revealCards = function () {
       $scope.game.estimate.status = 'reveal';
     };
 
     // Card deck options
     $scope.decks = [
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 35, 40, '?'],
       [0, '½', 1, 2, 3, 5, 8, 13, 20, 40, 100, '?'],
       [0, '½', 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, '?'],
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '?'],
@@ -303,10 +341,10 @@ angular.module('firePokerApp')
     $scope.showCards = false;
 
     // Set card deck visibility
-    $scope.setShowCardDeck = function() {
+    $scope.setShowCardDeck = function () {
       $scope.showCardDeck = true;
       if ($scope.game.estimate && $scope.game.estimate.results) {
-        angular.forEach($scope.game.estimate.results, function(result) {
+        angular.forEach($scope.game.estimate.results, function (result) {
           if (
             result &&
             result.user &&
@@ -320,7 +358,7 @@ angular.module('firePokerApp')
     };
 
     // Set estimation form visibility
-    $scope.setShowSelectEstimate = function() {
+    $scope.setShowSelectEstimate = function () {
       $scope.showSelectEstimate = false;
       if (
         $scope.game.estimate &&
@@ -329,15 +367,19 @@ angular.module('firePokerApp')
       ) {
         $scope.showSelectEstimate = true;
       }
+      //TODO hier habe ich admin hinzugefügt
+      if($scope.fp.user.fullname === "Admin"){
+        $scope.showSelectEstimate = true;
+      }
     };
 
     // Set new estimate average points
-    $scope.setNewEstimate = function() {
-      $scope.newEstimate = { points: $scope.getResultsAverage() };
+    $scope.setNewEstimate = function () {
+      $scope.newEstimate = {points: $scope.getResultsAverage()};
     };
 
     // Disable play again and reveal buttons if results are empty
-    $scope.setDisablePlayAgainAndRevealButtons = function() {
+    $scope.setDisablePlayAgainAndRevealButtons = function () {
       if (!$scope.game.estimate.results || $scope.game.estimate.results.length === 0) {
         $scope.disablePlayAgainAndRevealButtons = true;
       } else {
@@ -346,7 +388,7 @@ angular.module('firePokerApp')
     };
 
     // Show cards?
-    $scope.setShowCards = function() {
+    $scope.setShowCards = function () {
       $scope.showCards = false;
       if ($scope.game.estimate.status === 'reveal') {
         $scope.showCards = true;
@@ -361,9 +403,9 @@ angular.module('firePokerApp')
     };
 
     // Set unestimated stories count
-    $scope.setUnestimatedStoryCount = function() {
+    $scope.setUnestimatedStoryCount = function () {
       $scope.unestimatedStoriesCount = 0;
-      angular.forEach($scope.game.stories, function(story) {
+      angular.forEach($scope.game.stories, function (story) {
         if (story.status === 'queue') {
           $scope.unestimatedStoriesCount++;
         }
@@ -371,7 +413,7 @@ angular.module('firePokerApp')
     };
 
     // Logout
-    $scope.logout = function() {
+    $scope.logout = function () {
       $cookieStore.remove('fp');
       $location.path('/');
       $location.replace();
@@ -390,7 +432,7 @@ angular.module('firePokerApp')
     $scope.loadGame();
 
     // Update view on game changes
-    $scope.$watch('game', function(game) {
+    $scope.$watch('game', function (game) {
       if (!game) {
         return;
       }
