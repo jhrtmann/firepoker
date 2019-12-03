@@ -115,10 +115,9 @@ angular.module('firePokerApp')
       }
     };
 
-    //Get gameid
-    //TODO hier muss man die host url ändern, wenn man die Seite hosten will
+    //create join url from host and gameid
     $scope.getQRCode = function () {
-      var host = "http://localhost:9000/#/games/";
+      var host = "http://" + location.host + "/#/games/";
       var id = $routeParams.gid;
       return host + id;
     };
