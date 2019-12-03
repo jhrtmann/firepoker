@@ -153,6 +153,19 @@
   </div>
   <div class="col-md-4">
     <div class="affix">
+      <div class="btn-group pull-right">
+        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+          <span class="glyphicon glyphicon-cog"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <!--TODO die methode saveStories() in main.js erstellen
+          <li><a ng-click="saveStories()">Save session</a></li>
+          <li><a href="#">Another action</a></li>
+          <li><a href="#">Something else here</a></li>
+          <li class="divider"></li>-->
+          <li><a href="#" ng-click="logout()">Logout</a></li>
+        </ul>
+      </div>
       <div>
         <h4>{{game.name}}</h4>
         <p>{{game.description}}</p>
@@ -172,6 +185,13 @@
         <p>Copy the address in your browser and share with team members</p>
         <p>or scan this QR-Code:</p>
         <div id="qrcode" ng-click="zoom()">
+          <script>
+            //TODO bessere Lösung für die Erstellung des QRCode finden
+            var qr = new QRCode(document.getElementById("qrcode"), {
+              width: 300,
+              height: 300
+            });
+          </script>
           {{printQRCode()}}
         </div>
       </div>

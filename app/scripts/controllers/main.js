@@ -30,11 +30,6 @@ angular.module('firePokerApp')
       return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     };
 
-    var qr = new QRCode(document.getElementById("qrcode"), {
-      width: 300,
-      height: 300
-    });
-
     // Load cookies
     $scope.fp = $cookieStore.get('fp');
     if (!$scope.fp) {
@@ -130,6 +125,13 @@ angular.module('firePokerApp')
 
     $scope.printQRCode = function () {
       qr.makeCode($scope.getQRCode());
+    };
+
+    $scope.editable = function () {
+      var e = document.getElementById("linkedit");
+      var g = document.getElementsByClassName("glyphicon glyphicon-edit");
+      e.innerHTML = "";
+      e.contentEditable = "true";
     };
 
     $scope.zoom = function (){
