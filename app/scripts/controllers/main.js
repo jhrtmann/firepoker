@@ -1,5 +1,4 @@
 'use strict';
-
 /**
  * MainCtrl
  *
@@ -23,13 +22,18 @@ angular.module('firePokerApp')
 
     // UUID generator
     // Snippet from: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
-    var s4 = function() {
+    var s4 = function () {
       return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     };
 
-    var guid = function() {
+    var guid = function () {
       return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     };
+
+    var qr = new QRCode(document.getElementById("qrcode"), {
+      width: 300,
+      height: 300
+    });
 
     // Load cookies
     $scope.fp = $cookieStore.get('fp');
@@ -52,12 +56,12 @@ angular.module('firePokerApp')
     }
 
     // Is landing page?
-    $rootScope.isLandingPage = function() {
+    $rootScope.isLandingPage = function () {
       return $location.path() !== '/';
     };
 
     // Redirect with a GID to create new games
-    $scope.redirectToCreateNewGame = function() {
+    $scope.redirectToCreateNewGame = function () {
       if ($location.path() === '/games/new' || $location.path() === '/games/new/') {
         $scope.fp.gid = guid();
         $location.path('/games/new/' + $scope.fp.gid);
@@ -66,7 +70,7 @@ angular.module('firePokerApp')
     };
 
     // Redirect to set fullname if empty
-    $scope.redirectToSetFullnameIfEmpty = function() {
+    $scope.redirectToSetFullnameIfEmpty = function () {
       if (
         $routeParams.gid &&
         $location.path() === '/games/' + $routeParams.gid &&
@@ -78,7 +82,7 @@ angular.module('firePokerApp')
     };
 
     // Redirect to game if fullname already set
-    $scope.redirectToGameIfFullnameAlreadySet = function() {
+    $scope.redirectToGameIfFullnameAlreadySet = function () {
       if (
         $routeParams.gid &&
         $location.path() === '/games/join/' + $routeParams.gid &&
@@ -89,9 +93,9 @@ angular.module('firePokerApp')
     };
 
     // Load game and register presence
-    $scope.loadGame = function() {
+    $scope.loadGame = function () {
       if ($routeParams.gid && $location.path() === '/games/' + $routeParams.gid) {
-        angularFire(ref.child('/games/' + $routeParams.gid), $scope, 'game').then(function() {
+        angularFire(ref.child('/games/' + $routeParams.gid), $scope, 'game').then(function () {
           // Is current user the game owner?
           //TODO hier habe ich den check auf name admin hinzugefügt
           if ($scope.fp.user.fullname === "Admin") {
@@ -105,7 +109,7 @@ angular.module('firePokerApp')
         ref.child('/games/' + $routeParams.gid + '/participants/' + $scope.fp.user.id).set($scope.fp.user);
         var onlineRef = ref.child('/games/' + $routeParams.gid + '/participants/' + $scope.fp.user.id + '/online');
         var connectedRef = ref.child('/.info/connected');
-        connectedRef.on('value', function(snap) {
+        connectedRef.on('value', function (snap) {
           if (snap.val() === true) {
             // We're connected (or reconnected)!  Set up our presence state and
             // tell the server to set a timestamp when we leave.
@@ -119,17 +123,17 @@ angular.module('firePokerApp')
     //Get gameid
     //TODO hier muss man die host url ändern, wenn man die Seite hosten will
     $scope.getQRCode = function () {
-      var host = "http://localhost:9000/%23/games/";
+      var host = "http://localhost:9000/#/games/";
       var id = $routeParams.gid;
-      var link = host + id;
-      var image = "https://api.qrserver.com/v1/create-qr-code/?data=" + link + "&amp;size=500x500\" ";
-      var alt = "alt\"\" ";
-      //document.getElementById("qrcode").innerHTML = "<img id='qrcodeimg' src=" + image + alt + "/>";
       return host + id;
     };
 
+    $scope.printQRCode = function () {
+      qr.makeCode($scope.getQRCode());
+    };
+
     $scope.zoom = function (){
-        var q = document.getElementById("qrcodeimg");
+        var q = document.getElementById("qrimg");
         var width = window.innerWidth;
         if (width > 1170) {
           width = 1170;
@@ -140,8 +144,8 @@ angular.module('firePokerApp')
           q.style.width = size;
           q.style.height = size;
         } else {
-          q.style.width = "250px";
-          q.style.height = "250px";
+          q.style.width = "300px";
+          q.style.height = "300px";
         }
     };
 
@@ -151,11 +155,11 @@ angular.module('firePokerApp')
     };
 
     // Create game
-    $scope.createGame = function() {
+    $scope.createGame = function () {
       var stories = [],
-          newGame = angular.copy($scope.newGame);
+        newGame = angular.copy($scope.newGame);
       if (newGame.stories) {
-        angular.forEach(newGame.stories.split('\n'), function(title) {
+        angular.forEach(newGame.stories.split('\n'), function (title) {
           var story = {
             title: title,
             status: 'queue'
@@ -176,12 +180,12 @@ angular.module('firePokerApp')
     };
 
     // Set new game
-    $scope.setNewGame = function(game) {
+    $scope.setNewGame = function (game) {
       ref.child('/games/' + $routeParams.gid).set(game);
     };
 
     // Create story
-    $scope.createStory = function(type) {
+    $scope.createStory = function (type) {
       if (type === 'structured') {
         var title = 'As a/an ' +
           $scope.newStory.asA +
@@ -213,7 +217,7 @@ angular.module('firePokerApp')
     };
 
     // Set story
-    $scope.setStory = function(index) {
+    $scope.setStory = function (index) {
       $scope.cancelRound();
       $scope.game.estimate = $scope.game.stories[index];
       $scope.game.estimate.status = 'active';
@@ -224,22 +228,22 @@ angular.module('firePokerApp')
     };
 
     // Delete story
-    $scope.deleteStory = function(index) {
+    $scope.deleteStory = function (index) {
       $scope.game.stories.splice(index, 1);
     };
 
     // Estimate story
-    $scope.estimate = function(points) {
+    $scope.estimate = function (points) {
       if (!$scope.game.estimate.results) {
         $scope.game.estimate.results = [];
       }
-      $scope.game.estimate.results.push({points:points, user:$scope.fp.user});
+      $scope.game.estimate.results.push({points: points, user: $scope.fp.user});
     };
 
     // Show checkmarks when participant has voted
-    $scope.setShowCheckmarks = function() {
+    $scope.setShowCheckmarks = function () {
       if ($scope.game.estimate && $scope.game.estimate.results) {
-        angular.forEach($scope.game.estimate.results, function(result) {
+        angular.forEach($scope.game.estimate.results, function (result) {
           if (
             result &&
             result.user &&
@@ -253,7 +257,7 @@ angular.module('firePokerApp')
     };
 
     // Set full name
-    $scope.setFullname = function() {
+    $scope.setFullname = function () {
       $cookieStore.put('fp', $scope.fp);
       $location.path('/games/' + $routeParams.gid);
       $location.replace();
@@ -261,9 +265,9 @@ angular.module('firePokerApp')
 
     // Get estimate results average
     // https://stackoverflow.com/a/20762713/1346039
-    $scope.getResultsAverage = function() {
+    $scope.getResultsAverage = function () {
       var arr = [];
-      angular.forEach($scope.game.estimate.results, function(result) {
+      angular.forEach($scope.game.estimate.results, function (result) {
         arr.push(result.points);
       });
       return arr.sort(function(a,b) {
@@ -272,10 +276,10 @@ angular.module('firePokerApp')
     };
 
     // Get total of active participants
-    $scope.totalOfOnlineParticipants = function() {
+    $scope.totalOfOnlineParticipants = function () {
       var totalOfOnlineParticipants = 0;
       if ($scope.game && $scope.game.participants) {
-        angular.forEach($scope.game.participants, function(participant) {
+        angular.forEach($scope.game.participants, function (participant) {
           if (participant.online === true) {
             totalOfOnlineParticipants++;
           }
@@ -285,13 +289,13 @@ angular.module('firePokerApp')
     };
 
     // Accept
-    $scope.acceptRound = function() {
+    $scope.acceptRound = function () {
       $scope.game.estimate.points = $scope.newEstimate.points;
       $scope.game.estimate.endedAt = new Date().getTime();
       $scope.game.estimate.status = 'closed';
       $scope.game.stories[$scope.game.estimate.id] = angular.copy($scope.game.estimate);
       $scope.game.estimate = false;
-      angular.forEach($scope.game.participants, function(participant) {
+      angular.forEach($scope.game.participants, function (participant) {
         participant.hasVoted = false;
       });
     };
