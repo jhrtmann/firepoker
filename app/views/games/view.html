@@ -1,4 +1,3 @@
-
 <div class="row" ng-show="game">
   <div class="col-md-8">
     <!-- Estimated stories -->
@@ -6,6 +5,7 @@
       <div ng-show="story.status == 'closed'" class="bordered">
         <p class="text-right">Estimated: <span class="label label-danger">{{story.points || 'N/A'}}</span></p>
         <h5 ng-bind-html-unsafe="story.title"></h5>
+        <a href="{{story.link}}" target="_blank"><p ng-bind-html-unsafe="story.link"> </p></a>
         <p ng-bind-html-unsafe="story.notes"></p>
       </div>
     </div>
@@ -17,6 +17,13 @@
           <span class="label label-success">CURRENT</span>
         </p>
         <h5><span ng-model="game.estimate.title" contenteditable="true" no-line-breaks="true">{{game.estimate.title}}</span></h5>
+        <p id="link">
+          <a href="{{game.estimate.link}}" target="_blank">
+            <span  ng-model="game.estimate.link" contenteditable="false" id="linkedit">
+              {{game.estimate.link}}
+            </span>
+          </a>
+        </p>
         <p><span ng-model="game.estimate.notes" contenteditable="true" placeholder="Click to enter notes or description...">{{game.estimate.notes}}</span></p>
       </div>
       <!-- Estimates -->
@@ -71,7 +78,7 @@
     <!-- Create story -->
     <div ng-show="isOwner">
       <ul class="nav nav-tabs">
-        <li><a href="#free-form" data-toggle="tab" >Free-form</a></li>
+        <li><a href="#free-form" data-toggle="tab">Free-form</a></li>
         <li class="active"><a href="#structured" data-toggle="tab">Structured</a></li>
         <li><a href="#story-list" data-toggle="tab">Story list</a>
       </ul>
@@ -84,11 +91,15 @@
               <p class="help-block">Type or copy and paste your story as free-form text.</p>
             </div>
             <div class="form-group">
+              <label for="free-form-story-link">Link</label>
+              <input ng-model="newStory.link" class="form-control" id="free-form-story-link"/>
+            </div>
+            <div class="form-group">
               <label for="free-form-story-notes">Notes</label>
               <textarea ng-model="newStory.notes" class="form-control" id="free-form-story-notes" rows="3"></textarea>
             </div>
             <button type="submit" class="btn btn-success" ng-disabled="formFreeForm.$invalid">Add story</button>
-             or <a href="#">Cancel</a>
+            or <a href="#">Cancel</a>
           </form>
         </div>
         <div class="tab-pane active" id="structured">
@@ -104,6 +115,10 @@
             <div class="form-group">
               <label for="structured-story-so-that">So that...</label>
               <input ng-model="newStory.soThat" type="text" class="form-control" id="structured-story-so-that" required>
+            </div>
+            <div class="form-group">
+              <label for="structured-story-link">Link</label>
+              <input ng-model="newStory.link" class="form-control" id="structured-story-link"/>
             </div>
             <div class="form-group">
               <label for="structured-story-notes">Notes</label>
@@ -157,9 +172,7 @@
         <p>Copy the address in your browser and share with team members</p>
         <p>or scan this QR-Code:</p>
         <div id="qrcode" ng-click="zoom()">
-          <p><img id="qrcodeimg" src="https://api.qrserver.com/v1/create-qr-code/?data={{getQRCode()}}&amp;size=300x300"
-                  alt="" title="" height="250px" width="250px"/>
-          </p>
+          {{printQRCode()}}
         </div>
       </div>
     </div>
