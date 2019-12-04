@@ -91,8 +91,7 @@ angular.module('firePokerApp')
     $scope.loadGame = function () {
       if ($routeParams.gid && $location.path() === '/games/' + $routeParams.gid) {
         angularFire(ref.child('/games/' + $routeParams.gid), $scope, 'game').then(function () {
-          // Is current user the game owner?
-          //TODO hier habe ich den check auf name admin hinzugefügt
+          // Is current user the game owner? If username is Admin, user is game owner aswell
           if ($scope.fp.user.fullname === "Admin") {
             $scope.isOwner = true;
           } else if ($scope.game.owner && $scope.game.owner.id && $scope.game.owner.id === $scope.fp.user.id) {
@@ -115,24 +114,25 @@ angular.module('firePokerApp')
       }
     };
 
-    //create join url from host and gameid
-    $scope.getQRCode = function () {
+    //return gameURL, created from host and gameid
+    $scope.getGameURL = function () {
       var host = "http://" + location.host + "/#/games/";
       var id = $routeParams.gid;
       return host + id;
     };
 
-    $scope.printQRCode = function () {
-      qr.makeCode($scope.getQRCode());
+    //generate qrcode from gameURL
+    $scope.createQRCode = function () {
+      qr.makeCode($scope.getGameURL());
     };
-
+/*
     $scope.editable = function () {
       var e = document.getElementById("linkedit");
       var g = document.getElementsByClassName("glyphicon glyphicon-edit");
       e.innerHTML = "";
       e.contentEditable = "true";
     };
-
+ */
     $scope.zoom = function (){
         var q = document.getElementById("qrimg");
         var width = window.innerWidth;
@@ -150,9 +150,8 @@ angular.module('firePokerApp')
         }
     };
 
-    $scope.getStoryNotes = function (x) {
-
-      return $scope.game.stories[x].notes;
+    $scope.saveSession = function () {
+      //TODO find a way to save the session
     };
 
     // Create game

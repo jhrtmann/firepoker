@@ -153,6 +153,7 @@
   </div>
   <div class="col-md-4">
     <div class="affix">
+      <img src="images/doubleSlash.svg" width="195px" height="60px">
       <div class="btn-group pull-right">
         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
           <span class="glyphicon glyphicon-cog"></span>
@@ -186,13 +187,13 @@
         <p>or scan this QR-Code:</p>
         <div id="qrcode" ng-click="zoom()">
           <script>
-            //TODO bessere Lösung für die Erstellung des QRCode finden
+            //TODO better solution for creation of QRCode object
             var qr = new QRCode(document.getElementById("qrcode"), {
               width: 300,
               height: 300
             });
           </script>
-          {{printQRCode()}}
+          {{createQRCode()}}
         </div>
       </div>
     </div>

@@ -165,6 +165,19 @@ span:focus, span:focus:hover {
     margin-left: 0.5em;
     margin-right: 3em;
 }
+#dslogo {
+  vertical-align: bottom;
+}
+
+h4{
+  margin-top: 1.5em;
+}
+
+@media (max-width: 991px) {
+  .affix {
+    visibility: hidden;
+  }
+}
 
 /* sharing buttons */
 .resp-sharing-button__link,
