@@ -123,7 +123,11 @@ angular.module('firePokerApp')
 
     //generate qrcode from gameURL
     $scope.createQRCode = function () {
-      qr.makeCode($scope.getGameURL());
+      var qr = new QRCode(document.getElementById("qrcode"), {
+        text: $scope.getGameURL(),
+        width: 300,
+        height: 300
+      });
     };
 /*
     $scope.editable = function () {
@@ -149,11 +153,11 @@ angular.module('firePokerApp')
           q.style.height = "300px";
         }
     };
-
+/*
     $scope.saveSession = function () {
       //TODO find a way to save the session
     };
-
+ */
     // Create game
     $scope.createGame = function () {
       var stories = [],

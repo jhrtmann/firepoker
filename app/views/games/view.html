@@ -5,7 +5,7 @@
       <div ng-show="story.status == 'closed'" class="bordered">
         <p class="text-right">Estimated: <span class="label label-danger">{{story.points || 'N/A'}}</span></p>
         <h5 ng-bind-html-unsafe="story.title"></h5>
-        <a href="{{story.link}}" target="_blank"><p ng-bind-html-unsafe="story.link"> </p></a>
+        <a href="{{story.link}}" target="_blank">{{story.link}}</a>
         <p ng-bind-html-unsafe="story.notes"></p>
       </div>
     </div>
@@ -185,16 +185,7 @@
         <h5>Share this game</h5>
         <p>Copy the address in your browser and share with team members</p>
         <p>or scan this QR-Code:</p>
-        <div id="qrcode" ng-click="zoom()">
-          <script>
-            //TODO better solution for creation of QRCode object
-            var qr = new QRCode(document.getElementById("qrcode"), {
-              width: 300,
-              height: 300
-            });
-          </script>
-          {{createQRCode()}}
-        </div>
+        <div id="qrcode" ng-click="zoom()" ng-init="createQRCode()"></div>
       </div>
     </div>
   </div>
