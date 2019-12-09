@@ -114,50 +114,68 @@ angular.module('firePokerApp')
       }
     };
 
-    //return gameURL, created from host and gameid
-    $scope.getGameURL = function () {
-      var host = "http://" + location.host + "/#/games/";
-      var id = $routeParams.gid;
-      return host + id;
-    };
-
-    //generate qrcode from gameURL
+    // generate qrcode from URL
     $scope.createQRCode = function () {
       var qr = new QRCode(document.getElementById("qrcode"), {
-        text: $scope.getGameURL(),
+        text: document.URL,
         width: 300,
         height: 300
       });
     };
-/*
-    $scope.editable = function () {
-      var e = document.getElementById("linkedit");
-      var g = document.getElementsByClassName("glyphicon glyphicon-edit");
-      e.innerHTML = "";
-      e.contentEditable = "true";
+
+    $scope.zoom = function () {
+      var q = document.getElementById("qrimg");
+      var width = window.innerWidth;
+      if (width > 1170) {
+        width = 1170;
+      }
+      var col = width / 3;
+      var size = col + "px";
+      if (q.style.height !== size) {
+        q.style.width = size;
+        q.style.height = size;
+      } else {
+        q.style.width = "300px";
+        q.style.height = "300px";
+      }
     };
- */
-    $scope.zoom = function (){
-        var q = document.getElementById("qrimg");
-        var width = window.innerWidth;
-        if (width > 1170) {
-          width = 1170;
+
+    $scope.getAcceptedStoryCount = function () {
+      var acceptedStories = 0;
+      angular.forEach($scope.game.stories, function (value) {
+        if (value.status === "closed") {
+          acceptedStories++;
         }
-        var col = width / 3;
-        var size = col + "px";
-        if (q.style.height !== size) {
-          q.style.width = size;
-          q.style.height = size;
+      });
+      return acceptedStories;
+    };
+
+    // session gets saved via window.print, hides irrelevant information first, then shows it again
+    $scope.printSession = function () {
+      if ($scope.getAcceptedStoryCount() < $scope.game.stories.length) {
+        window.alert("There are unestimated stories left, if you want to save them, you need to accept them!");
+      }
+      $(document).ready(function () {
+        if ($scope.game.stories && $scope.getAcceptedStoryCount() > 0) {
+          var q1 = ".col-md-8 > div";
+          var q2 = ".col-md-4";
+          $(q1).slice(-4).hide();
+          $(q2).hide();
+          window.print();
+          //location.reload(); // slower
+          if ($scope.game.estimate) { // faster but hard coded
+            $(q1).slice(-2).show();
+            $(".col-md-8 div:nth-last-child(4)").show();
+          } else {
+            $(q1).slice(-3).show();
+          }
+          $(q2).show();
         } else {
-          q.style.width = "300px";
-          q.style.height = "300px";
+          window.alert("Nothing to save. You need to accept at least one story to save it.");
         }
+      });
     };
-/*
-    $scope.saveSession = function () {
-      //TODO find a way to save the session
-    };
- */
+
     // Create game
     $scope.createGame = function () {
       var stories = [],
@@ -274,8 +292,12 @@ angular.module('firePokerApp')
       angular.forEach($scope.game.estimate.results, function (result) {
         arr.push(result.points);
       });
-      return arr.sort(function(a,b) {
-        return arr.filter(function(v) { return v===a; }).length - arr.filter(function(v) { return v===b; }).length;
+      return arr.sort(function (a, b) {
+        return arr.filter(function (v) {
+          return v === a;
+        }).length - arr.filter(function (v) {
+          return v === b;
+        }).length;
       }).pop();
     };
 
@@ -371,12 +393,8 @@ angular.module('firePokerApp')
       if (
         $scope.game.estimate &&
         $scope.game.owner &&
-        $scope.game.owner.id === $scope.fp.user.id
+        ($scope.game.owner.id === $scope.fp.user.id || $scope.fp.user.fullname === "Admin")
       ) {
-        $scope.showSelectEstimate = true;
-      }
-      //TODO hier habe ich admin hinzugefügt
-      if($scope.fp.user.fullname === "Admin"){
         $scope.showSelectEstimate = true;
       }
     };
