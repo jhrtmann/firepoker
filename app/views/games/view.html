@@ -78,12 +78,12 @@
     <!-- Create story -->
     <div ng-show="isOwner">
       <ul class="nav nav-tabs">
-        <li><a href="#free-form" data-toggle="tab">Free-form</a></li>
-        <li class="active"><a href="#structured" data-toggle="tab">Structured</a></li>
+        <li class="active"><a href="#free-form" data-toggle="tab">Free-form</a></li>
+        <li><a href="#structured" data-toggle="tab">Structured</a></li>
         <li><a href="#story-list" data-toggle="tab">Story list</a>
       </ul>
       <div class="tab-content">
-        <div class="tab-pane" id="free-form">
+        <div class="tab-pane active" id="free-form">
           <form name="formFreeForm" ng-submit="createStory('free-form')">
             <div class="form-group">
               <label for="free-form-story-title">Story</label>
@@ -102,7 +102,7 @@
             or <a href="#">Cancel</a>
           </form>
         </div>
-        <div class="tab-pane active" id="structured">
+        <div class="tab-pane" id="structured">
           <form name="formStructured" ng-submit="createStory('structured')" novalidate>
             <div class="form-group">
               <label for="structured-story-as-a-an">As a/an...</label>
@@ -159,11 +159,10 @@
           <span class="glyphicon glyphicon-cog"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
-          <!--TODO die methode saveStories() in main.js erstellen
-          <li><a ng-click="saveStories()">Save session</a></li>
-          <li><a href="#">Another action</a></li>
-          <li><a href="#">Something else here</a></li>
-          <li class="divider"></li>-->
+          <li><a ng-show="isOwner" ng-click="printSession()">Print session</a></li>
+          <!--<li><a href="#">Another action</a></li>
+          <li><a href="#">Something else here</a></li>-->
+          <li class="divider" ng-show="isOwner"></li>
           <li><a href="#" ng-click="logout()">Logout</a></li>
         </ul>
       </div>
