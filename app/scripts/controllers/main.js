@@ -152,8 +152,8 @@ angular.module('firePokerApp')
 
     // session gets saved via window.print, hides irrelevant information first, then shows it again
     $scope.printSession = function () {
-      if ($scope.getAcceptedStoryCount() < $scope.game.stories.length) {
-        window.alert("There are unestimated stories left, if you want to save them, you need to accept them!");
+      if ($scope.game.stories && $scope.getAcceptedStoryCount() < $scope.game.stories.length) {
+        window.alert("There are unestimated stories left, if you want to print them, you need to accept them!");
       }
       $(document).ready(function () {
         if ($scope.game.stories && $scope.getAcceptedStoryCount() > 0) {
@@ -171,7 +171,7 @@ angular.module('firePokerApp')
           }
           $(q2).show();
         } else {
-          window.alert("Nothing to save. You need to accept at least one story to save it.");
+          window.alert("Nothing to print. You need to accept at least one story to print it.");
         }
       });
     };
