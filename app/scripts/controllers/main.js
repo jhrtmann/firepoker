@@ -176,6 +176,13 @@ angular.module('firePokerApp')
       });
     };
 
+    $scope.checkURL = function () {
+      var story = $scope.game.stories[$scope.game.stories.length - 1];
+      if( story.link && story.link.length > 3 && story.link.indexOf("//") === -1) {
+        story.link = "https://" + story.link;
+      }
+    };
+
     // Create game
     $scope.createGame = function () {
       var stories = [],
@@ -231,6 +238,7 @@ angular.module('firePokerApp')
       }
       $scope.game.stories.push($scope.newStory);
       $scope.newStory = null;
+      $scope.checkURL();
       // Set this story if there is none active
       // maybe this is good thing todo only if the queue is empty
       if (!$scope.game.estimate) {
@@ -440,6 +448,7 @@ angular.module('firePokerApp')
 
     // Logout
     $scope.logout = function () {
+      $scope.game.participants[$scope.fp.user.id].online = false;
       $cookieStore.remove('fp');
       $location.path('/');
       $location.replace();
