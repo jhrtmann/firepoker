@@ -179,7 +179,7 @@ angular.module('firePokerApp')
     $scope.checkURL = function () {
       var story = $scope.game.stories[$scope.game.stories.length - 1];
       if( story.link && story.link.length > 3 && story.link.indexOf("//") === -1) {
-        story.link = "https://" + story.link;
+        story.link = "http://" + story.link;
       }
     };
 
