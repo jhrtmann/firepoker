@@ -141,6 +141,17 @@ module.exports = function (grunt) {
         }
       }
     },
+    compress: {
+      main: {
+        options: {
+          archive: 'app.zip'
+        },
+        files: [
+          {expand: true, src: ['**'], cwd: "app/"}, // excludes the app folder in archive.zip
+          //{src: ['app/**']}, // compresses the entire folder app
+        ]
+      }
+    },
     concat: {
       dist: {
         files: {
@@ -309,4 +320,5 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['build']);
 
+  grunt.loadNpmTasks('grunt-contrib-compress');
 };
