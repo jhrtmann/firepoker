@@ -33,7 +33,16 @@ nvm install
 # changes terminal session to use the compatible node version
 nvm use
 ```
+If you are running Windows, use [nvm for Windows](https://github.com/coreybutler/nvm-windows) 
 
+Make sure to run your CLI with Administrator rights 
+```
+# install the compatible node version (v6 in this case)
+nvm install 6
+
+# changes terminal session to use the compatible node version (6.17.1 in this case)
+nvm use 6.17.1
+```
 Install dependencies
 
 ```
@@ -62,6 +71,12 @@ To run unit tests
 
 ```
 grunt karma:unit
+```
+
+To generate a zipfile of the app
+
+```
+grunt compress
 ```
 
 ## Contributing
